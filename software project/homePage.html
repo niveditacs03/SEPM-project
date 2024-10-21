@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Contact Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            margin-bottom: 50px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .top-btn-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .top-btn-container button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .top-btn-container button:hover {
+            background-color: #0056b3;
+        }
+        .contacts-list {
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+        }
+        .contact-item {
+            background-color: #fff;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .call-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .call-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add Numbers button at the top -->
+    <div class="top-btn-container">
+        <button id="addNumbersBtn">Add Numbers</button>
+    </div>
+
+    <h1>Emergency Contact</h1>
+    <button id="callPolice">Call Police</button>
+    <button id="callFamily">Call Family</button>
+    <button id="MedicalHelp">Get Medical Help</button>
+
+    <!-- List of family contacts -->
+    <div id="familyContacts" class="contacts-list">
+        <h2>Your Saved Family Contacts</h2>
+        <div id="contactList"></div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        const userEmail = localStorage.getItem('userEmail');
+        if (!userEmail || !localStorage.getItem('userPassword')) {
+            // Redirect to login page if not logged in
+            window.location.href = 'loginPage.html';
+        }
+
+        // Button click to add numbers (contacts)
+        document.getElementById('addNumbersBtn').onclick = function() {
+            window.location.href = 'addContacts.html'; // Redirect to add contacts page
+        };
+
+        document.getElementById('callPolice').onclick = function() {
+            alert("Calling the Police...");
+            window.open('locationTracking.html','blank');
+        };
+
+        document.getElementById('callFamily').onclick = function() {
+            const familyContacts = document.getElementById('familyContacts');
+            const contactList = document.getElementById('contactList');
+            
+            // Clear previous contacts displayed
+            contactList.innerHTML = '';
+
+            // Retrieve contacts from local storage for the logged-in user
+            const contactsKey = `emergencyContacts_${userEmail}`;
+            const contacts = JSON.parse(localStorage.getItem(contactsKey)) || [];
+
+            // If no contacts saved
+            if (contacts.length === 0) {
+                contactList.innerHTML = '<p>No contacts saved. Please add contacts first.</p>';
+            } else {
+                // Show each contact in the list
+                contacts.forEach(contact => {
+                    const contactItem = document.createElement('div');
+                    contactItem.classList.add('contact-item');
+                    
+                    contactItem.innerHTML = `
+                        <span><strong>${contact.name}</strong>: ${contact.number}</span>
+                        <button class="call-btn" onclick="callContact('${contact.name}')">Call</button>
+                    `;
+
+                    contactList.appendChild(contactItem);
+                });
+            }
+
+            // Show the contacts list
+            familyContacts.style.display = 'block';
+        };
+
+        // Function to alert calling the contact
+        function callContact(name) {
+            alert(`Calling ${name}...`);
+        }
+
+        document.getElementById('MedicalHelp').onclick = function() {
+            alert("Calling nearby hospital...");
+            window.open('locationTracking.html','blank');
+        };
+    </script>
+</body>
+</html>
